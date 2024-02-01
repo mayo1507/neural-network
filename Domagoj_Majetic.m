@@ -1,11 +1,8 @@
-%Programski zadatak 
-%Domagoj Majetic, 0035215314
-
 clc
 clear all
 
-%Unos problema 
-problem_input = input('Unesite "x" za XOR problem ili bilo koji drugi unos za proizvoljan problem iz datoteka D.txt i Z.txt: ', 's');
+%Problem input
+problem_input = input('Type "x" for XOR problem or any other input for custom problem from D.txt and Z.txt files: ', 's');
 if problem_input == 'x'
     D = [0; 1; 1; 0];
     Z = [0 0 1; 1 0 1; 0 1 1; 1 1 1]; 
@@ -16,17 +13,17 @@ else
     Z = [Z ZBias];
 end
 
-%Unos pocetnih tezina
-tezine_input = input('Unesite "t" za tezine s predavanja ili bilo koji drugi unos za proizvoljne tezine: ', 's');
+%Initial weights input
+tezine_input = input('Type "t" for predefined weights or any other input for custom weights: ', 's');
 if tezine_input == 't'
    V = [0.2 0.9 -0.3; -0.9 0.8 0.2];
    W = [-0.2 -0.9 0.7];
    br_skrivenih = size(V,1);
 else 
-    random_tezine_input = input('Unesite "r" za nasumicne tezine ili bilo koji drugi unos za tezine iz datoteka V.txt i W.txt: ', 's');
+    random_tezine_input = input('Type "r" for random weights or any other input for weights from V.txt and W.txt files: ', 's');
     if random_tezine_input == 'r'
         br_ulaz = size(Z,2);
-        br_skrivenih = input ('Unesite zeljeni broj neurona skrivenog sloja (npr. "5"): ');
+        br_skrivenih = input ('Enter the desired number of hidden layer neurons (etc. "5"): ');
         br_izlaz = size(D,2);
         V = -1+rand(br_skrivenih, br_ulaz)*2;
         W = -1+rand(br_izlaz, br_skrivenih + 1)*2;
@@ -37,15 +34,15 @@ else
     end
 end
 
-%Odabir aktivacijske funkcije i zeljenih vrijednosti
-aktfun = input('Unesite "1" ili "2" za odabir aktivacijske funkcije: ');
+%Activation function and other parameters selection
+aktfun = input('Type "1" or "2" to select activation function: ');
 while aktfun ~= 1 && aktfun ~= 2
-    aktfun = input('Pogresan unos! Ponovno unesite "1" ili "2" za odabir aktivacijske funkcije: ');
+    aktfun = input('Wrong input! Type again "1" or "2" to select activation function: ');
 end
-eta = input('Unesite vrijednost zeljenog koeficijenta ucenja (npr. "0.1"): ');
-br_koraka = input('Unesite zeljeni broj koraka ucenja (npr. "1000"): ');
-desired_NRMS = input('Unesite vrijednost zeljenog NRMS-a (npr. "0.05"): ');
-alpha = input('Unesite vrijednost za zeljeni momentum (npr. "0.5"): ');
+eta = input('Type the value of desired learning rate (etc. "0.1"): ');
+br_koraka = input('Type the number of desired learning steps (etc. "1000"): ');
+desired_NRMS = input('Type the value of desired NRMS (etc. "0.05"): ');
+alpha = input('Type the value of desired momentum (etc. "0.5"): ');
 
 O = zeros(size(D));
 MS = 0;
@@ -54,7 +51,7 @@ NRMS = zeros(br_koraka, size(Z,2));
 V_old = V;
 W_old = W;
 
-%Odziv 0-tog koraka
+%Zeroth step response
 for i = 1 : size(Z,1)
     netH = V*Z(i,:)';
     if aktfun == 1
@@ -65,7 +62,7 @@ for i = 1 : size(Z,1)
     O (i,:) = W*y;
 end
 
-%Faze ucenja 
+%Learning phases
 for n = 1 : br_koraka
     for i = 1 : size(Z,1)
         netH = V*Z(i,:)';
@@ -125,17 +122,17 @@ for i = 1 : size(Z,1)
     O_(i,:) = W*y;
 end
 
-%Graf
+%Plotting
 plot(1:n, NRMS, 'Color', [1 0 0], 'LineWidth', 2)
 grid on
-xlabel('Korak ucenja'),ylabel('NRMS')
+xlabel('Learning step'),ylabel('NRMS')
 
-%Ispis rezultata
-disp('Broj koraka ucenja: ')
+%Results display
+disp('Number of learning steps: ')
 disp(n)
-disp('Zeljeni izlaz: ')
+disp('Desired output: ')
 disp(D)
-disp('Dobiveni izlaz: ')
+disp('Obtained output: ')
 disp(O)
-disp('Iznos NRMS-a: ')
+disp('NRMS value: ')
 disp(NRMS(n))
